@@ -4,7 +4,6 @@ export function useRequest<T>() {
 	const [data, setData] = useState<T>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<Error | null>(null);
-	const [info, setInfo] = useState<string | null>(null);
 
 	const get = async (url: string) => {
 		setLoading(true);
@@ -16,13 +15,14 @@ export function useRequest<T>() {
 				}`,
 			},
 		})
-			.then(async response => {
+			.then(response => {
 				if (!response.ok) {
 					throw new Error(`Ошибка HTTP запроса! Статус ошибки ${response.status}`);
 				}
-				const result = await response.json();
-				setData(result);
-				setInfo(result);
+				return response.json();
+			})
+			.then(reponse => {
+				setData(reponse);
 			})
 			.catch(error => {
 				if (error instanceof Error) {
@@ -34,5 +34,5 @@ export function useRequest<T>() {
 			});
 	};
 
-	return { data, loading, error, get, info };
+	return { data, loading, error, get };
 }
