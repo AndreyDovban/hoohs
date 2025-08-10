@@ -21,7 +21,7 @@ export function ToastWithApiExample({ className, ...props }: ToastWithApiExample
 
 	useEffect(() => {
 		if (info) {
-			toast.success('work', options);
+			toast.success(info, options);
 		}
 	}, [info]);
 

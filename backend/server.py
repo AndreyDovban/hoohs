@@ -10,7 +10,7 @@ app = Flask(__name__, static_url_path='/static')
 def user():
     print("work api user ", request.method)
 
-    time.sleep(1)
+    time.sleep(0.5)
 
     if request.method == "GET":
         return make_response(jsonify("get ok"), 200)
