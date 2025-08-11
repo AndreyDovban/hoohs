@@ -1,10 +1,12 @@
 import { useState } from 'react';
 
-type RequestConfig = {
+type IRequestConfig = {
 	method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	body?: unknown;
-	auth?: unknown;
+	auth?: string;
 };
+
+type IHeaders = Record<string, string>;
 
 export function useRequest<T>(url: string) {
 	const [data, setData] = useState<T>();
@@ -14,7 +16,11 @@ export function useRequest<T>(url: string) {
 
 	let controller = new AbortController();
 
-	const request = async (config?: RequestConfig) => {
+	const request = async (config?: IRequestConfig) => {
+		const headers: IHeaders = { 'Content-Type': 'application/json' };
+		if (config?.auth) {
+			headers['Authorization'] = config.auth;
+		}
 		try {
 			setLoading(true);
 			setInfo('');
@@ -25,12 +31,7 @@ export function useRequest<T>(url: string) {
 
 			const response = await fetch(url, {
 				method: config?.method || 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${
-						localStorage.getItem('login_token') ? localStorage.getItem('login_token') : ''
-					}`,
-				},
+				headers: headers,
 				body: JSON.stringify(config?.body),
 				signal,
 			});
