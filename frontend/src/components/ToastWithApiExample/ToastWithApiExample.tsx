@@ -49,8 +49,8 @@ export function ToastWithApiExample({ className, ...props }: ToastWithApiExample
 	function postProd() {
 		prod.request({
 			method: 'POST',
-			auth: `Bearer ${localStorage.getItem('login_token') ? localStorage.getItem('login_token') : ''}`,
 			body: 'post',
+			auth: `Bearer ${localStorage.getItem('login_token') ? localStorage.getItem('login_token') : ''}`,
 		});
 	}
 	function delProd() {
