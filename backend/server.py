@@ -27,7 +27,7 @@ def user():
         return make_response(jsonify("user delete ok"), 200)
 
 
-@app.route("/api/product",  methods=["GET", "POST", "DELETE"])
+@app.route("/api/product",  methods=["GET", "POST"])
 # Работа с сущностью продукт
 def product():
     print("work api product ", request.method)

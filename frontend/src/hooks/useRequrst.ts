@@ -6,7 +6,7 @@ type RequestConfig = {
 	auth?: unknown;
 };
 
-export function useRequest<T>() {
+export function useRequest<T>(url: string) {
 	const [data, setData] = useState<T>();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<Error | null>(null);
@@ -14,7 +14,7 @@ export function useRequest<T>() {
 
 	let controller = new AbortController();
 
-	const get = async (url: string, config?: RequestConfig) => {
+	const request = async (config?: RequestConfig) => {
 		try {
 			setLoading(true);
 			setInfo('');
@@ -44,15 +44,13 @@ export function useRequest<T>() {
 				setInfo(result);
 			}
 		} catch (error) {
-			if (error instanceof Error) {
-				if (!(error.name === 'AbortError')) {
-					setError(error);
-				}
+			if (error instanceof Error && error.name !== 'AbortError') {
+				setError(error);
 			}
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	return { data, loading, error, get, info };
+	return { data, loading, error, info, request };
 }

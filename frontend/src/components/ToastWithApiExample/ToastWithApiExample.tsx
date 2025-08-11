@@ -8,26 +8,30 @@ const options: ToastOptions = {
 	position: 'top-right',
 };
 
-const notify = (text: string) => toast.success(text, options);
-
 interface ToastWithApiExampleProps extends DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> {
 	className?: string;
 }
 
 export function ToastWithApiExample({ className, ...props }: ToastWithApiExampleProps) {
-	const user = useRequest<string>();
-	const prod = useRequest<string>();
+	const user = useRequest<string>('/api/user');
+	const prod = useRequest<string>('/api/product');
 
 	useEffect(() => {
-		user.get('/api/user');
+		user.request();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		if (prod.info) {
-			notify(prod.info);
+			toast.success(prod.info, options);
 		}
 	}, [prod.info]);
+
+	useEffect(() => {
+		if (prod.error) {
+			toast.error(prod.error.message, options);
+		}
+	}, [prod.error]);
 
 	if (user.loading) {
 		return <p>LOADING...</p>;
@@ -38,32 +42,29 @@ export function ToastWithApiExample({ className, ...props }: ToastWithApiExample
 		return <p>{user.error.message}</p>;
 	}
 
-	if (prod.error) {
-		toast.error(prod.error.message, options);
+	function getProd() {
+		prod.request();
 	}
 
-	function getProd() {
-		prod.get('/api/product');
-	}
 	function postProd() {
-		prod.get('/api/product', {
+		prod.request({
 			method: 'POST',
 			body: 'post',
 		});
 	}
 	function delProd() {
-		prod.get('/api/product', {
+		prod.request({
 			method: 'DELETE',
 			body: 'delete',
 		});
 	}
 	return (
 		<section className={cn(className, styles.toast_with_api_example)} {...props}>
-			<h1>HELLO</h1>
+			<h1>EXAMPLE</h1>
 			<h2>{user.data}</h2>
-			<button onClick={getProd}>GET PROD</button>
-			<button onClick={postProd}>GET PROD</button>
-			<button onClick={delProd}>DELTE PROD</button>
+			<button onClick={getProd}>GET PRODUCT</button>
+			<button onClick={postProd}>GET PRODUCT</button>
+			<button onClick={delProd}>DELTE PRODUCT</button>
 			<Toaster />
 		</section>
 	);
