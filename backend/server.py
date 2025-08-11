@@ -10,7 +10,7 @@ app = Flask(__name__, static_url_path='/static')
 def user():
     print("work api user ", request.method)
 
-    time.sleep(1)
+    # time.sleep(1)
 
     if request.method == "GET":
         return make_response(jsonify("user get ok"), 200)
@@ -27,12 +27,12 @@ def user():
         return make_response(jsonify("user delete ok"), 200)
 
 
-@app.route("/api/product",  methods=["POST", "DELETE"])
+@app.route("/api/product",  methods=["GET", "POST", "DELETE"])
 # Работа с сущностью продукт
 def product():
     print("work api product ", request.method)
 
-    time.sleep(1)
+    # time.sleep(1)
 
     if request.method == "GET":
         return make_response(jsonify("product get ok"), 200)

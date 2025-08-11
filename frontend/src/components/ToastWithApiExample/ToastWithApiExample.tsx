@@ -6,45 +6,65 @@ import { useRequest } from '../../hooks/useRequrst';
 
 const options: ToastOptions = {
 	position: 'top-right',
-	removeDelay: 2000,
 };
+
+const notify = (text: string) => toast.success(text, options);
 
 interface ToastWithApiExampleProps extends DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> {
 	className?: string;
 }
 
 export function ToastWithApiExample({ className, ...props }: ToastWithApiExampleProps) {
-	const { loading, error, data, get } = useRequest<string>();
+	const user = useRequest<string>();
+	const prod = useRequest<string>();
 
 	useEffect(() => {
-		get('/api/user');
+		user.get('/api/user');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	if (loading) {
+	useEffect(() => {
+		if (prod.info) {
+			notify(prod.info);
+		}
+	}, [prod.info]);
+
+	if (user.loading) {
 		return <p>LOADING...</p>;
 	}
 
-	if (error) {
-		toast.error(error.message, options);
-		return <p>{error.message}</p>;
+	if (user.error) {
+		toast.error(user.error.message, options);
+		return <p>{user.error.message}</p>;
+	}
+
+	if (prod.error) {
+		toast.error(prod.error.message, options);
 	}
 
 	function getProd() {
-		get('/api/user');
+		prod.get('/api/product');
 	}
-	if (data) {
-		toast.success(data, options);
-
-		return (
-			<section className={cn(className, styles.toast_with_api_example)} {...props}>
-				<h1>HELLO</h1>
-				<h2>{data}</h2>
-				<button onClick={getProd}>GET PROD</button>
-				{/* <button onClick={postProd}>GET PROD</button> */}
-				{/* <button onClick={delProd}>DELTE PROD</button> */}
-				<Toaster />
-			</section>
-		);
+	function postProd() {
+		prod.get('/api/product', {
+			method: 'POST',
+			body: 'post',
+		});
 	}
+	function delProd() {
+		prod.get('/api/product', {
+			method: 'DELETE',
+			body: 'delete',
+		});
+	}
+	return (
+		<section className={cn(className, styles.toast_with_api_example)} {...props}>
+			<h1>HELLO</h1>
+			<h2>{user.data}</h2>
+			<button onClick={getProd}>GET PROD</button>
+			<button onClick={postProd}>GET PROD</button>
+			<button onClick={delProd}>DELTE PROD</button>
+			<Toaster />
+		</section>
+	);
 }
